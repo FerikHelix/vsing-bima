@@ -29,25 +29,29 @@ class _TableDetailsState extends State<TableDetails> {
         ],
       ),
       body: Center(
-        child: Column(
+        child: ListView(
           children: [
             const Center(child: _VsingClubLogo()),
-            const Text(
-              "Vsing Club",
-              style: TextStyle(
-                color: Color(primaryColor),
-                fontSize: 20,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 20, bottom: 5),
-              child: Text(
-                "Name",
+            Center(
+              child: const Text(
+                "Vsing Club",
                 style: TextStyle(
                   color: Color(primaryColor),
                   fontSize: 20,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ),
+            Center(
+              child: const Padding(
+                padding: EdgeInsets.only(top: 20, bottom: 5),
+                child: Text(
+                  "Name",
+                  style: TextStyle(
+                    color: Color(primaryColor),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),
@@ -110,22 +114,55 @@ class _VsingClubLogo extends StatelessWidget {
   }
 }
 
-class _userName extends StatelessWidget {
-  const _userName({
-    super.key,
-    this.username = "Agung",
-  });
-  final String username;
+class _userName extends StatefulWidget {
+  const _userName({super.key});
+
+  @override
+  State<_userName> createState() => _userNameState();
+}
+
+class _userNameState extends State<_userName> {
+  var userInputName = TextEditingController();
+  String name = "";
+  bool is_Input = false;
   @override
   Widget build(BuildContext context) {
-    return Text(
-      username,
-      style: const TextStyle(
-        color: Color(primaryColor),
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-      ),
-    );
+    return is_Input
+        ? Center(
+            child: Text(
+              name,
+              style: const TextStyle(
+                color: Color(primaryColor),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 150,
+                child: TextFormField(
+                  decoration: InputDecoration(hintText: "Input Nama Anda"),
+                  controller: userInputName,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    name = userInputName.text;
+                    is_Input = true;
+                  });
+                },
+                style: const ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Color(primaryColor)),
+                ),
+                child: Text("Done"),
+              )
+            ],
+          );
   }
 }
 
@@ -246,6 +283,7 @@ class _pickDate extends StatefulWidget {
 
 class __pickDateState extends State<_pickDate> {
   String datetime = "";
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -258,24 +296,25 @@ class __pickDateState extends State<_pickDate> {
           ),
         ),
         Text(
-          datetime,
-          style: TextStyle(
+          datetime.toString(),
+          style: const TextStyle(
             color: Color(primaryColor),
             fontSize: 20,
           ),
         ),
-        Container(
+        SizedBox(
           width: 150,
           // height: 100,
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              DateTime? datetimeRet = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1950),
+                  lastDate: DateTime(2100));
               setState(() {
-                datetime = showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1950),
-                        lastDate: DateTime(2100))
-                    .toString();
+                datetime =
+                    "${datetimeRet?.day}/${datetimeRet?.month}/${datetimeRet?.year} - ${DateTime.now().hour}:${DateTime.now().minute}";
               });
             },
             style: const ButtonStyle(
